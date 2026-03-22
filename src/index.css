@@ -1,0 +1,51 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background:260 30% 96%;
+  --foreground:260 40% 15%;
+  --card:0 0% 100%;
+  --card-foreground:260 40% 15%;
+  --popover:0 0% 100%;
+  --popover-foreground:260 40% 15%;
+  --primary:262 52% 47%;
+  --primary-foreground:0 0% 100%;
+  --secondary:260 20% 90%;
+  --secondary-foreground:262 52% 47%;
+  --muted:260 10% 94%;
+  --muted-foreground:260 10% 45%;
+  --accent:38 92% 50%;
+  --accent-foreground:0 0% 100%;
+  --destructive:0 84% 60%;
+  --destructive-foreground:0 0% 98%;
+  --border:260 20% 88%;
+  --input:260 20% 88%;
+  --ring:262 52% 47%;
+  --radius:0.75rem;
+}
+
+@layer base {
+  * { @apply border-border box-border; }
+  html { -webkit-font-smoothing:antialiased; scroll-behavior:smooth; }
+  body { @apply bg-background text-foreground; font-family:'Inter',sans-serif; min-height:100dvh; }
+  h1,h2,h3,h4,h5,h6 { font-family:'Outfit',sans-serif; }
+  ::-webkit-scrollbar { width:5px; }
+  ::-webkit-scrollbar-track { background:hsl(var(--muted)); }
+  ::-webkit-scrollbar-thumb { background:hsl(var(--border)); border-radius:3px; }
+}
+
+@layer components {
+  .text-gradient { @apply bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-primary; }
+  .card-hover { @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-primary/5 hover:border-primary/25; }
+  /* Honeypot — invisible to humans, visible to bots */
+  .hp-field { position:absolute!important; top:-9999px!important; left:-9999px!important; width:1px!important; height:1px!important; overflow:hidden!important; opacity:0!important; pointer-events:none!important; }
+  /* Trust badge colours */
+  .trust-high   { background:#d1fae5; color:#065f46; border:1px solid #6ee7b7; }
+  .trust-medium { background:#dbeafe; color:#1e3a5f; border:1px solid #93c5fd; }
+  .trust-low    { background:#f3f4f6; color:#374151; border:1px solid #d1d5db; }
+  .trust-bad    { background:#fee2e2; color:#7f1d1d; border:1px solid #fca5a5; }
+  /* Scam warning */
+  .scam-banner  { @apply flex items-start gap-3 rounded-xl border px-4 py-3 text-sm; background:#fefce8; border-color:#fde047; color:#713f12; }
+}
