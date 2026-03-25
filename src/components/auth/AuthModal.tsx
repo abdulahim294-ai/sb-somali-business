@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/useToast";
+import { GoogleButton } from "@/components/auth/GoogleButton";
 import { ShieldCheck, Eye, EyeOff, AlertCircle } from "lucide-react";
 
 type Mode = "login" | "register";
@@ -119,7 +120,9 @@ export function AuthModal({ open, onClose, defaultMode = "login" }: Props) {
             {mode === "login" ? "Gal" : "Fur Xisaab"}
           </Button>
 
-          <p className="text-center text-sm text-muted-foreground">
+          <GoogleButton />
+<div className="flex items-center gap-2 my-1"><div className="flex-1 h-px bg-border"></div><span className="text-xs text-muted-foreground">ama</span><div className="flex-1 h-px bg-border"></div></div>
+<p className="text-center text-sm text-muted-foreground">
             {mode === "login" ? (
               <>Xisaab ma lihid?{" "}<button type="button" onClick={() => sw("register")} className="text-primary font-semibold hover:underline">Fur haddeer</button></>
             ) : (
