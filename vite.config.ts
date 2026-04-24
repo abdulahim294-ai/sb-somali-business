@@ -1,12 +1,29 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
+
 export default defineConfig({
   plugins: [react()],
   resolve: { alias: { "@": path.resolve(__dirname, "src") } },
   build: {
     outDir: "dist",
-    rollupOptions: { output: { manualChunks: { vendor: ["react","react-dom","wouter"], supabase: ["@supabase/supabase-js"], ui: ["framer-motion","lucide-react"] } } }
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ["react", "react-dom", "wouter"],
+          supabase: ["@supabase/supabase-js"],
+          ui: ["framer-motion", "lucide-react"],
+        },
+      },
+    },
   },
-  server: { port: 5173, host: true }
+  server: {
+    port: 5000,
+    host: "0.0.0.0",
+    allowedHosts: true,
+  },
+  preview: {
+    port: 5000,
+    host: "0.0.0.0",
+  },
 });

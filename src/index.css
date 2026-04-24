@@ -1,51 +1,145 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --background:260 30% 96%;
-  --foreground:260 40% 15%;
-  --card:0 0% 100%;
-  --card-foreground:260 40% 15%;
-  --popover:0 0% 100%;
-  --popover-foreground:260 40% 15%;
-  --primary:262 52% 47%;
-  --primary-foreground:0 0% 100%;
-  --secondary:260 20% 90%;
-  --secondary-foreground:262 52% 47%;
-  --muted:260 10% 94%;
-  --muted-foreground:260 10% 45%;
-  --accent:38 92% 50%;
-  --accent-foreground:0 0% 100%;
-  --destructive:0 84% 60%;
-  --destructive-foreground:0 0% 98%;
-  --border:260 20% 88%;
-  --input:260 20% 88%;
-  --ring:262 52% 47%;
-  --radius:0.75rem;
+  /* Brand — refined purple */
+  --background: 240 20% 98%;
+  --foreground: 240 25% 12%;
+
+  --card: 0 0% 100%;
+  --card-foreground: 240 25% 12%;
+
+  --popover: 0 0% 100%;
+  --popover-foreground: 240 25% 12%;
+
+  --primary: 262 60% 50%;
+  --primary-foreground: 0 0% 100%;
+
+  --secondary: 260 25% 94%;
+  --secondary-foreground: 262 50% 28%;
+
+  --muted: 240 15% 95%;
+  --muted-foreground: 240 10% 42%;
+
+  --accent: 38 92% 50%;
+  --accent-foreground: 26 80% 12%;
+
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 98%;
+
+  --border: 240 15% 90%;
+  --input: 240 15% 88%;
+  --ring: 262 60% 50%;
+
+  --radius: 0.85rem;
 }
 
 @layer base {
-  * { @apply border-border box-border; }
-  html { -webkit-font-smoothing:antialiased; scroll-behavior:smooth; }
-  body { @apply bg-background text-foreground; font-family:'Inter',sans-serif; min-height:100dvh; }
-  h1,h2,h3,h4,h5,h6 { font-family:'Outfit',sans-serif; }
-  ::-webkit-scrollbar { width:5px; }
-  ::-webkit-scrollbar-track { background:hsl(var(--muted)); }
-  ::-webkit-scrollbar-thumb { background:hsl(var(--border)); border-radius:3px; }
+  * {
+    @apply border-border box-border;
+  }
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+    text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    min-height: 100dvh;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Outfit', 'Inter', sans-serif;
+    @apply tracking-tight text-slate-900;
+  }
+  /* Better default focus ring for keyboard users */
+  :focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+  }
+  /* Scrollbar (subtle, modern) */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.4);
+  }
+  /* Selection */
+  ::selection {
+    background: hsl(var(--primary) / 0.18);
+    color: hsl(var(--primary));
+  }
 }
 
 @layer components {
-  .text-gradient { @apply bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-primary; }
-  .card-hover { @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-primary/5 hover:border-primary/25; }
+  /* Shared page section width */
+  .container-app {
+    @apply mx-auto w-full px-4 sm:px-6 max-w-6xl;
+  }
+  .container-narrow {
+    @apply mx-auto w-full px-4 sm:px-6 max-w-3xl;
+  }
+  .container-form {
+    @apply mx-auto w-full px-4 sm:px-6 max-w-2xl;
+  }
+
+  /* Branding gradient text */
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(262 70% 55%) 0%, hsl(280 75% 60%) 100%);
+  }
+
+  /* Card hover */
+  .card-hover {
+    @apply transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md hover:shadow-primary/10 hover:border-primary/30;
+  }
+
+  /* Section heading pair */
+  .section-eyebrow {
+    @apply inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-primary/80;
+  }
+
   /* Honeypot — invisible to humans, visible to bots */
-  .hp-field { position:absolute!important; top:-9999px!important; left:-9999px!important; width:1px!important; height:1px!important; overflow:hidden!important; opacity:0!important; pointer-events:none!important; }
+  .hp-field {
+    position: absolute !important;
+    top: -9999px !important;
+    left: -9999px !important;
+    width: 1px !important;
+    height: 1px !important;
+    overflow: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+
   /* Trust badge colours */
-  .trust-high   { background:#d1fae5; color:#065f46; border:1px solid #6ee7b7; }
-  .trust-medium { background:#dbeafe; color:#1e3a5f; border:1px solid #93c5fd; }
-  .trust-low    { background:#f3f4f6; color:#374151; border:1px solid #d1d5db; }
-  .trust-bad    { background:#fee2e2; color:#7f1d1d; border:1px solid #fca5a5; }
-  /* Scam warning */
-  .scam-banner  { @apply flex items-start gap-3 rounded-xl border px-4 py-3 text-sm; background:#fefce8; border-color:#fde047; color:#713f12; }
+  .trust-high   { @apply bg-emerald-50 text-emerald-700 border border-emerald-200; }
+  .trust-medium { @apply bg-sky-50 text-sky-700 border border-sky-200; }
+  .trust-low    { @apply bg-slate-100 text-slate-600 border border-slate-200; }
+  .trust-bad    { @apply bg-red-50 text-red-700 border border-red-200; }
+
+  /* Scam warning box */
+  .scam-banner {
+    @apply flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900;
+  }
+
+  /* Skeleton placeholder */
+  .skeleton {
+    @apply animate-pulse rounded-2xl bg-slate-100;
+  }
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 }
