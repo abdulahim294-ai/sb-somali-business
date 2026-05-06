@@ -1,0 +1,13 @@
+uploads = []
+
+[[generated]]
+id = "tYDHvXkw1EH9eaTUuKSam"
+uri = "file://public/og-image.png"
+type = "image"
+title = "sb-somali-business og image"
+
+[[outputs]]
+id = "fxkb8NxU0CBWzTNuxp5J2"
+uri = "file://public/og-image.png"
+type = "image"
+title = "sb-somali-business OG Image (1200x630)"

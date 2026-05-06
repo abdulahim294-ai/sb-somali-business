@@ -1,23 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+
   <url>
     <loc>https://sb-somali-business-7krb.vercel.app/</loc>
+    <changefreq>daily</changefreq>
     <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="so" href="https://sb-somali-business-7krb.vercel.app/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sb-somali-business-7krb.vercel.app/"/>
   </url>
+
   <url>
     <loc>https://sb-somali-business-7krb.vercel.app/jobs</loc>
-    <priority>0.9</priority>
+    <changefreq>hourly</changefreq>
+    <priority>0.95</priority>
   </url>
+
   <url>
     <loc>https://sb-somali-business-7krb.vercel.app/freelancers</loc>
-    <priority>0.8</priority>
+    <changefreq>daily</changefreq>
+    <priority>0.90</priority>
   </url>
+
+  <url>
+    <loc>https://sb-somali-business-7krb.vercel.app/pricing</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+
   <url>
     <loc>https://sb-somali-business-7krb.vercel.app/post-job</loc>
-    <priority>0.7</priority>
+    <changefreq>weekly</changefreq>
+    <priority>0.75</priority>
   </url>
+
   <url>
     <loc>https://sb-somali-business-7krb.vercel.app/create-profile</loc>
-    <priority>0.7</priority>
+    <changefreq>weekly</changefreq>
+    <priority>0.75</priority>
   </url>
+
 </urlset>

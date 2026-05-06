@@ -103,8 +103,7 @@ export function Footer() {
 
         <div className="border-t border-border/60 mt-10 pt-6 flex flex-col md:flex-row items-center justify-between gap-2 text-xs text-muted-foreground">
           <p>
-            © {new Date().getFullYear()} SB Somali Business. Dhammaan
-            xuquuqaha way xifnaan.
+            © {new Date().getFullYear()} sb-somali-business. All rights reserved. | Somali Jobs &amp; Freelance Marketplace
           </p>
           <p className="flex items-center gap-1.5">
             La sameeyay <Heart className="w-3.5 h-3.5 text-red-500 fill-red-500" /> Soomaaliya

@@ -7,6 +7,8 @@ import {
   TrendingUp,
   Users,
   Sparkles,
+  BadgeCheck,
+  Zap,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Header } from "@/components/Header";
@@ -81,30 +83,37 @@ export default function Home() {
             </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-3 gap-3 max-w-md mx-auto mb-10">
+            <div className="grid grid-cols-3 gap-3 max-w-md mx-auto mb-6">
               {[
-                {
-                  n: jobs?.length ?? 0,
-                  label: "Shaqooyin",
-                  suffix: "+",
-                },
-                {
-                  n: freelancers?.length ?? 0,
-                  label: "Xirfadlayaal",
-                  suffix: "+",
-                },
-                { n: 100, label: "Bilaash", suffix: "%" },
+                { n: jobs?.length ?? 0,        label: "Shaqooyin",      suffix: "+" },
+                { n: freelancers?.length ?? 0, label: "Xirfadlayaal",   suffix: "+" },
+                { n: "1,200",                  label: "Isticmaalayaal", suffix: "+" },
               ].map((s) => (
                 <div key={s.label} className="text-center">
                   <div className="text-2xl md:text-3xl font-bold font-display text-primary tabular-nums">
-                    {s.n}
-                    {s.suffix}
+                    {s.n}{s.suffix}
                   </div>
                   <div className="text-xs sm:text-sm text-muted-foreground mt-0.5">
                     {s.label}
                   </div>
                 </div>
               ))}
+            </div>
+
+            {/* Trust signal strip */}
+            <div className="flex flex-wrap justify-center gap-2 mb-8">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 border border-emerald-200 px-3 py-1 text-xs font-semibold text-emerald-700">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                Firfircoon hadda
+              </span>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/5 border border-primary/20 px-3 py-1 text-xs font-semibold text-primary">
+                <BadgeCheck className="w-3.5 h-3.5" />
+                Trusted Somali Marketplace
+              </span>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 border border-amber-200 px-3 py-1 text-xs font-semibold text-amber-700">
+                <ShieldCheck className="w-3.5 h-3.5" />
+                Anti-Scam Protected
+              </span>
             </div>
 
             {/* Tags */}
@@ -164,6 +173,37 @@ export default function Home() {
                       {desc}
                     </p>
                   </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Platform Trust Section */}
+        <section className="py-10 bg-white border-b border-border/60">
+          <div className="container-app">
+            <div className="text-center mb-7">
+              <div className="inline-flex items-center gap-2 rounded-full bg-primary/8 border border-primary/20 px-4 py-1.5 mb-3">
+                <BadgeCheck className="w-4 h-4 text-primary" />
+                <span className="text-sm font-semibold text-primary">Trusted Somali Marketplace</span>
+              </div>
+              <p className="text-sm text-muted-foreground max-w-md mx-auto">
+                Goobtaas aaminsan ee ganacsiga Soomaaliyeed — xaqiijiyay, badbaadiyay, oo firfircoon.
+              </p>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {[
+                { icon: Users,       value: "1,200+",  label: "Isticmaalayaal",       color: "text-primary",    bg: "bg-primary/8"    },
+                { icon: BadgeCheck,  value: "500+",    label: "Shaqooyin la xaqiijiyay", color: "text-emerald-600", bg: "bg-emerald-50" },
+                { icon: ShieldCheck, value: "98%",     label: "Anti-Scam Score",      color: "text-amber-600",  bg: "bg-amber-50"     },
+                { icon: Zap,         value: "🇸🇴 SO",  label: "Dhammaan degaannada",  color: "text-violet-600", bg: "bg-violet-50"    },
+              ].map(({ icon: Icon, value, label, color, bg }) => (
+                <div key={label} className={`rounded-2xl ${bg} border border-border/50 p-5 flex flex-col items-center text-center gap-2`}>
+                  <div className={`w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center`}>
+                    <Icon className={`w-5 h-5 ${color}`} />
+                  </div>
+                  <span className={`text-2xl font-bold font-display ${color}`}>{value}</span>
+                  <span className="text-xs text-muted-foreground leading-tight">{label}</span>
                 </div>
               ))}
             </div>

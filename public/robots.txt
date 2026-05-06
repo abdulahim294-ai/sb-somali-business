@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://sb-somali-business-7krb.vercel.app/sitemap.xml
+
+# Disallow admin/private routes
+Disallow: /dashboard
+Disallow: /upgrade/
+Disallow: /settings
