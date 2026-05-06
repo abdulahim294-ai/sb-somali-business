@@ -48,6 +48,11 @@ async function deleteJob(id: string) {
   if (error) throw new Error(error.message);
 }
 
+async function updateJobStatus(id: string, status: string) {
+  const { error } = await supabase.from("jobs").update({ status }).eq("id", id);
+  if (error) throw new Error(error.message);
+}
+
 async function reportJob(jobId: string, reporterId: string, reason: string, details?: string) {
   const { error } = await supabase.from("reports")
     .insert([{ job_id:jobId, reporter_id:reporterId, reason, details: details ?? null }]);
@@ -90,6 +95,15 @@ export function useDeleteJob() {
   return useMutation({
     mutationFn:(id:string)=>deleteJob(id),
     onSuccess:()=>{ qc.invalidateQueries({queryKey:["jobs"]}); qc.invalidateQueries({queryKey:["my-jobs"]}); toast({title:"La tirtiray",variant:"success"}); },
+    onError:(e:Error)=>toast({title:"Cillad",description:e.message,variant:"destructive"}),
+  });
+}
+
+export function useUpdateJobStatus() {
+  const qc = useQueryClient(); const { toast } = useToast();
+  return useMutation({
+    mutationFn:({ id, status }:{id:string;status:string})=>updateJobStatus(id, status),
+    onSuccess:()=>{ qc.invalidateQueries({queryKey:["jobs"]}); qc.invalidateQueries({queryKey:["my-jobs"]}); toast({title:"Shaqada waa la cusbooneysiiyay",variant:"success"}); },
     onError:(e:Error)=>toast({title:"Cillad",description:e.message,variant:"destructive"}),
   });
 }

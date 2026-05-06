@@ -42,6 +42,14 @@ async function withdrawApplication(id: string) {
   if (error) throw new Error(error.message);
 }
 
+async function updateApplicationStatus(id: string, status: Application["status"]) {
+  const { error } = await supabase
+    .from("applications")
+    .update({ status, updated_at: new Date().toISOString() })
+    .eq("id", id);
+  if (error) throw new Error(error.message);
+}
+
 export const useMyApplications = (uid: string | null) =>
   useQuery({
     queryKey: ["applications", uid],
@@ -95,5 +103,29 @@ export function useWithdrawApplication() {
         description: e.message,
         variant: "destructive",
       }),
+  });
+}
+
+export function useUpdateApplicationStatus() {
+  const qc = useQueryClient();
+  const { toast } = useToast();
+  return useMutation({
+    mutationFn: ({ id, status }: { id: string; status: Application["status"] }) =>
+      updateApplicationStatus(id, status),
+    onSuccess: (_, { status }) => {
+      qc.invalidateQueries({ queryKey: ["job-applications"] });
+      qc.invalidateQueries({ queryKey: ["applications"] });
+      toast({
+        title:
+          status === "accepted"
+            ? "Codsiga waa la aqbalay ✓"
+            : status === "rejected"
+              ? "Codsiga waa la diiday"
+              : "Xaaladda waa la cusbooneysiiyay",
+        variant: status === "accepted" ? "success" : "default",
+      });
+    },
+    onError: (e: Error) =>
+      toast({ title: "Khalad", description: e.message, variant: "destructive" }),
   });
 }

@@ -12,6 +12,7 @@ import {
   LayoutDashboard,
   Crown,
   ChevronDown,
+  Settings,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -174,6 +175,11 @@ export function Header() {
                         </Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem asChild>
+                        <Link href="/settings" className="flex items-center gap-2 cursor-pointer w-full">
+                          <Settings className="w-4 h-4 text-slate-500" /> Goobta xisaabta
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
                         <Link href="/post-job" className="flex items-center gap-2 cursor-pointer w-full">
                           <PlusCircle className="w-4 h-4" /> Daabac shaqo
                         </Link>
@@ -271,6 +277,11 @@ export function Header() {
                     <Link href="/dashboard">
                       <Button variant="outline" className="w-full gap-2">
                         <LayoutDashboard className="w-4 h-4 text-primary" /> Dashboard
+                      </Button>
+                    </Link>
+                    <Link href="/settings">
+                      <Button variant="outline" className="w-full gap-2">
+                        <Settings className="w-4 h-4 text-slate-500" /> Goobta xisaabta
                       </Button>
                     </Link>
                     <Link href="/post-job">

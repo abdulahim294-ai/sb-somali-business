@@ -13,24 +13,30 @@ import Pricing       from "@/pages/Pricing";
 import Upgrade       from "@/pages/Upgrade";
 import Dashboard     from "@/pages/Dashboard";
 import ApplyJob      from "@/pages/ApplyJob";
+import Applicants    from "@/pages/Applicants";
 import Profile       from "@/pages/Profile";
+import Settings      from "@/pages/Settings";
+import CVPage        from "@/pages/CVPage";
 import NotFound      from "@/pages/NotFound";
 
 function Router() {
   return (
     <Switch>
-      <Route path="/"                   component={Home}          />
-      <Route path="/jobs"               component={Jobs}          />
-      <Route path="/jobs/:id/apply"     component={ApplyJob}      />
-      <Route path="/jobs/:id"           component={JobDetails}    />
-      <Route path="/freelancers"        component={Freelancers}   />
-      <Route path="/profile/:id"        component={Profile}       />
-      <Route path="/post-job"           component={PostJob}       />
-      <Route path="/create-profile"     component={CreateProfile} />
-      <Route path="/pricing"            component={Pricing}       />
-      <Route path="/upgrade/:planId"    component={Upgrade}       />
-      <Route path="/dashboard"          component={Dashboard}     />
-      <Route                            component={NotFound}      />
+      <Route path="/"                        component={Home}          />
+      <Route path="/jobs"                    component={Jobs}          />
+      <Route path="/jobs/:id/apply"          component={ApplyJob}      />
+      <Route path="/jobs/:id/applicants"     component={Applicants}    />
+      <Route path="/jobs/:id"               component={JobDetails}    />
+      <Route path="/freelancers"             component={Freelancers}   />
+      <Route path="/profile/:id"             component={Profile}       />
+      <Route path="/cv/:id"                  component={CVPage}        />
+      <Route path="/post-job"               component={PostJob}       />
+      <Route path="/create-profile"          component={CreateProfile} />
+      <Route path="/pricing"                 component={Pricing}       />
+      <Route path="/upgrade/:planId"         component={Upgrade}       />
+      <Route path="/dashboard"               component={Dashboard}     />
+      <Route path="/settings"               component={Settings}      />
+      <Route                                 component={NotFound}      />
     </Switch>
   );
 }
