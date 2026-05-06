@@ -6,8 +6,6 @@ const key = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined;
 export const SUPABASE_CONFIGURED = Boolean(url && key);
 
 if (!SUPABASE_CONFIGURED && typeof window !== "undefined") {
-  // Soft warning so the app still boots in preview without crashing.
-  // Real auth/data calls will return errors handled by hooks.
   console.warn(
     "[supabase] VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY is missing. " +
       "Auth & data features are disabled until you configure them in .env."
@@ -28,6 +26,8 @@ export const supabase: SupabaseClient = createClient(
 
 // ── Types ──────────────────────────────────────────────────────
 
+export type PlanId = "free" | "basic" | "free_pro" | "premium";
+
 export interface Profile {
   id: string;
   full_name: string | null;
@@ -36,11 +36,16 @@ export interface Profile {
   city: string | null;
   bio: string | null;
   avatar_url: string | null;
+  website_url: string | null;
   trust_score: number;
   is_verified: boolean;
   is_banned: boolean;
+  plan: PlanId;
+  plan_started_at: string | null;
   posts_today: number;
   last_post_date: string | null;
+  apps_today: number;
+  last_app_date: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -89,6 +94,32 @@ export interface Freelancer {
   joined_at: string;
 }
 
+export interface Application {
+  id: string;
+  job_id: string;
+  user_id: string;
+  cover_letter: string | null;
+  contact_whatsapp: string | null;
+  contact_email: string | null;
+  status: "pending" | "seen" | "accepted" | "rejected" | "withdrawn";
+  created_at: string;
+  updated_at: string;
+  // joined
+  jobs?: { title: string; company: string } | null;
+}
+
+export interface Review {
+  id: string;
+  job_id: string | null;
+  reviewer_id: string;
+  reviewee_id: string;
+  rating: number;
+  comment: string | null;
+  created_at: string;
+  // joined
+  reviewer?: { full_name: string | null } | null;
+}
+
 export type NewJob = {
   title: string;
   company: string;
@@ -102,3 +133,11 @@ export type NewJob = {
 };
 
 export type NewFreelancer = Omit<Freelancer, "id" | "joined_at" | "user_id">;
+
+export type NewApplication = {
+  job_id: string;
+  user_id: string;
+  cover_letter?: string | null;
+  contact_whatsapp?: string | null;
+  contact_email?: string | null;
+};

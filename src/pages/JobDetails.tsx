@@ -14,22 +14,29 @@ import {
   Flag,
   Shield,
   CheckCircle2,
+  Send,
+  Crown,
 } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ReportDialog } from "@/components/ReportDialog";
+import { Breadcrumb } from "@/components/Breadcrumb";
 import { useJob, useReportJob } from "@/hooks/useJobs";
 import { useAuth } from "@/hooks/useAuth";
+import { usePlan, useCanApply } from "@/hooks/usePlan";
 import { getTrustInfo, SCAM_TIPS } from "@/utils/trustScore";
 import { shareJobWA, contactEmployerWA } from "@/utils/helpers";
+import { cn } from "@/lib/utils";
 
 export default function JobDetails() {
   const [, params] = useRoute<{ id: string }>("/jobs/:id");
   const id = params?.id ?? "";
   const { data: job, isLoading } = useJob(id);
   const { user } = useAuth();
+  const { plan } = usePlan();
+  const canApply = useCanApply();
   const { mutate: report, isPending } = useReportJob();
   const [showRep, setShowRep] = useState(false);
 
@@ -72,12 +79,13 @@ export default function JobDetails() {
       <Header />
       <main className="flex-1 py-8 md:py-12">
         <div className="container-app max-w-4xl">
-          <Link
-            href="/jobs"
-            className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-primary mb-6 transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4 mr-1" /> Dib u laabo
-          </Link>
+          <Breadcrumb
+            items={[
+              { label: "Shaqooyin", href: "/jobs" },
+              { label: job.title },
+            ]}
+            className="mb-6"
+          />
 
           {isBad && (
             <div className="mb-5 flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded-xl text-sm text-red-800">
@@ -115,7 +123,10 @@ export default function JobDetails() {
                       </Badge>
                     )}
                     <span
-                      className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full ${trust.cls}`}
+                      className={cn(
+                        "inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full",
+                        trust.cls
+                      )}
                       title={trust.tip}
                     >
                       <Shield className="w-3 h-3" /> {trust.label}
@@ -131,14 +142,39 @@ export default function JobDetails() {
 
                 {/* CTAs */}
                 <div className="flex flex-col gap-2 md:min-w-[220px]">
+                  {/* Primary Apply CTA */}
+                  {user ? (
+                    canApply ? (
+                      <Link href={`/jobs/${job.id}/apply`}>
+                        <Button className="w-full gap-2 h-11 font-semibold shadow-sm shadow-primary/20">
+                          <Send className="w-4 h-4" /> Codso shaqadan
+                        </Button>
+                      </Link>
+                    ) : (
+                      <Link href="/pricing">
+                        <Button
+                          className="w-full gap-2 h-11 bg-amber-500 hover:bg-amber-600 font-semibold"
+                        >
+                          <Crown className="w-4 h-4" /> Kor u qaad — codso
+                        </Button>
+                      </Link>
+                    )
+                  ) : (
+                    <Link href={`/jobs/${job.id}/apply`}>
+                      <Button className="w-full gap-2 h-11 font-semibold">
+                        <Send className="w-4 h-4" /> Codso shaqadan
+                      </Button>
+                    </Link>
+                  )}
+
                   {job.contact_whatsapp && (
                     <a
                       href={contactEmployerWA(job.contact_whatsapp, job.title)}
                       target="_blank"
                       rel="noreferrer"
                     >
-                      <Button variant="whatsapp" className="w-full gap-2">
-                        <MessageSquare className="w-4 h-4" /> Codso WhatsApp
+                      <Button variant="outline" className="w-full gap-2">
+                        <MessageSquare className="w-4 h-4 text-emerald-600" /> WhatsApp
                       </Button>
                     </a>
                   )}
@@ -149,10 +185,11 @@ export default function JobDetails() {
                       )}`}
                     >
                       <Button variant="outline" className="w-full gap-2">
-                        <Mail className="w-4 h-4" /> Codso email
+                        <Mail className="w-4 h-4" /> Email
                       </Button>
                     </a>
                   )}
+
                   <div className="flex gap-2">
                     <Button
                       variant="outline"
@@ -181,7 +218,11 @@ export default function JobDetails() {
                 {[
                   { icon: MapPin, text: job.location },
                   { icon: Briefcase, text: job.salary ?? job.type },
-                  { icon: Clock, text: job.status === "active" ? "Firfircoon" : job.status },
+                  {
+                    icon: Clock,
+                    text:
+                      job.status === "active" ? "Firfircoon" : job.status,
+                  },
                   {
                     icon: Calendar,
                     text: job.posted_at
@@ -193,7 +234,7 @@ export default function JobDetails() {
                     key={i}
                     className="flex items-center gap-2 text-sm text-slate-600"
                   >
-                    <Icon className="w-4 h-4 text-primary/70 shrink-0" />{" "}
+                    <Icon className="w-4 h-4 text-primary/70 shrink-0" />
                     <span className="truncate">{text}</span>
                   </div>
                 ))}
@@ -209,8 +250,25 @@ export default function JobDetails() {
                 {job.description}
               </div>
 
+              {/* Apply CTA inline */}
+              <div className="mt-8 p-5 bg-primary/5 rounded-xl border border-primary/15 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                <div className="flex-1">
+                  <p className="font-semibold text-slate-900">
+                    Xiiseynaysaa shaqadan?
+                  </p>
+                  <p className="text-sm text-muted-foreground mt-0.5">
+                    Codso hadda si aad uga faa'iidaysato fursadan.
+                  </p>
+                </div>
+                <Link href={user ? `/jobs/${job.id}/apply` : `/jobs/${job.id}/apply`}>
+                  <Button className="gap-2 font-semibold shrink-0">
+                    <Send className="w-4 h-4" /> Codso hadda
+                  </Button>
+                </Link>
+              </div>
+
               {/* Safety box */}
-              <div className="mt-10 p-5 bg-amber-50 rounded-xl border border-amber-200 space-y-2">
+              <div className="mt-8 p-5 bg-amber-50 rounded-xl border border-amber-200 space-y-2">
                 <h4 className="font-semibold text-amber-900 flex items-center gap-2">
                   <Shield className="w-5 h-5" /> Ammaan iyo xaqiijin
                 </h4>

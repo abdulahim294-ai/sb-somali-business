@@ -1,37 +1,28 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/lib/supabase";
+import { supabase, type Application, type NewApplication } from "@/lib/supabase";
 import { useToast } from "@/hooks/useToast";
 
-export interface Application {
-  id: string;
-  job_id: string;
-  user_id: string;
-  cover_letter: string | null;
-  contact_whatsapp: string | null;
-  contact_email: string | null;
-  status: string;
-  created_at: string;
-}
-
-export interface NewApplication {
-  job_id: string;
-  user_id: string;
-  cover_letter?: string | null;
-  contact_whatsapp?: string | null;
-  contact_email?: string | null;
-}
-
-async function fetchMyApplications(uid: string) {
+async function fetchMyApplications(uid: string): Promise<Application[]> {
   const { data, error } = await supabase
     .from("applications")
     .select("*, jobs(title, company)")
     .eq("user_id", uid)
     .order("created_at", { ascending: false });
-  if (error) return [] as Application[];
+  if (error) return [];
   return (data ?? []) as Application[];
 }
 
-async function createApplication(input: NewApplication) {
+async function fetchJobApplications(jobId: string): Promise<Application[]> {
+  const { data, error } = await supabase
+    .from("applications")
+    .select("*")
+    .eq("job_id", jobId)
+    .order("created_at", { ascending: false });
+  if (error) return [];
+  return (data ?? []) as Application[];
+}
+
+async function createApplication(input: NewApplication): Promise<Application> {
   const { data, error } = await supabase
     .from("applications")
     .insert([{ ...input, status: "pending" }])
@@ -43,11 +34,28 @@ async function createApplication(input: NewApplication) {
   return data as Application;
 }
 
+async function withdrawApplication(id: string) {
+  const { error } = await supabase
+    .from("applications")
+    .update({ status: "withdrawn", updated_at: new Date().toISOString() })
+    .eq("id", id);
+  if (error) throw new Error(error.message);
+}
+
 export const useMyApplications = (uid: string | null) =>
   useQuery({
     queryKey: ["applications", uid],
     queryFn: () => fetchMyApplications(uid!),
     enabled: !!uid,
+    staleTime: 30_000,
+  });
+
+export const useJobApplications = (jobId: string | null) =>
+  useQuery({
+    queryKey: ["job-applications", jobId],
+    queryFn: () => fetchJobApplications(jobId!),
+    enabled: !!jobId,
+    staleTime: 30_000,
   });
 
 export function useApplyToJob() {
@@ -66,6 +74,24 @@ export function useApplyToJob() {
     onError: (e: Error) =>
       toast({
         title: "Codsi lama dirin",
+        description: e.message,
+        variant: "destructive",
+      }),
+  });
+}
+
+export function useWithdrawApplication() {
+  const qc = useQueryClient();
+  const { toast } = useToast();
+  return useMutation({
+    mutationFn: (id: string) => withdrawApplication(id),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["applications"] });
+      toast({ title: "Codsiga waa la joojiyay", variant: "success" });
+    },
+    onError: (e: Error) =>
+      toast({
+        title: "Khalad",
         description: e.message,
         variant: "destructive",
       }),

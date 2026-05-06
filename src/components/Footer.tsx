@@ -1,5 +1,5 @@
 import { Link } from "wouter";
-import { Mail, Phone, MapPin, ShieldCheck, Heart } from "lucide-react";
+import { Mail, Phone, MapPin, ShieldCheck, Heart, Crown } from "lucide-react";
 
 export function Footer() {
   return (
@@ -26,38 +26,23 @@ export function Footer() {
               Bogagga
             </h3>
             <ul className="space-y-3 text-sm">
-              <li>
-                <Link
-                  href="/jobs"
-                  className="text-muted-foreground hover:text-primary transition-colors"
-                >
-                  Shaqooyin
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/freelancers"
-                  className="text-muted-foreground hover:text-primary transition-colors"
-                >
-                  Xirfadlayaal
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/post-job"
-                  className="text-muted-foreground hover:text-primary transition-colors"
-                >
-                  Daabac shaqo
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/create-profile"
-                  className="text-muted-foreground hover:text-primary transition-colors"
-                >
-                  Samee profile
-                </Link>
-              </li>
+              {[
+                { href: "/jobs",           label: "Shaqooyin" },
+                { href: "/freelancers",    label: "Xirfadlayaal" },
+                { href: "/post-job",       label: "Daabac shaqo" },
+                { href: "/create-profile", label: "Samee profile" },
+                { href: "/pricing",        label: "Qiimaha" },
+                { href: "/dashboard",      label: "Dashboard" },
+              ].map((l) => (
+                <li key={l.href}>
+                  <Link
+                    href={l.href}
+                    className="text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    {l.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
@@ -105,6 +90,12 @@ export function Footer() {
               <li className="flex items-start gap-2 text-muted-foreground">
                 <Heart className="w-4 h-4 text-primary shrink-0 mt-0.5" />
                 <span>Adeeg bilaash ah — lacag uma baahna</span>
+              </li>
+              <li className="flex items-start gap-2 text-muted-foreground">
+                <Crown className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+                <Link href="/pricing" className="hover:text-primary transition-colors">
+                  Qorshooyinka Premium
+                </Link>
               </li>
             </ul>
           </div>

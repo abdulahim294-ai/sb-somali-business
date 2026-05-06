@@ -16,8 +16,7 @@ export function usePlan(): {
   loading: boolean;
 } {
   const { profile, loading } = useAuth();
-  // `plan` may not exist on older profile rows — default to "free"
-  const planId = ((profile as any)?.plan as PlanId) || "free";
+  const planId = (profile?.plan as PlanId) || "free";
   const plan = getPlan(planId);
   return {
     plan,
@@ -26,6 +25,36 @@ export function usePlan(): {
     isPaid: plan.id !== "free",
     loading,
   };
+}
+
+/** Checks whether the user can post more jobs this month. */
+export function useCanPost(): boolean {
+  const { profile } = useAuth();
+  const { plan } = usePlan();
+  if (!profile) return false;
+  const limit = plan.limits.jobsPerMonth;
+  if (limit < 0) return true;
+  const today = new Date().toISOString().split("T")[0];
+  const resetMonth =
+    !profile.last_post_date ||
+    profile.last_post_date.substring(0, 7) !== today.substring(0, 7);
+  const used = resetMonth ? 0 : (profile.posts_today ?? 0);
+  return used < limit;
+}
+
+/** Checks whether the user can submit more job applications this month. */
+export function useCanApply(): boolean {
+  const { profile } = useAuth();
+  const { plan } = usePlan();
+  if (!profile) return false;
+  const limit = plan.limits.appsPerMonth;
+  if (limit < 0) return true;
+  const today = new Date().toISOString().split("T")[0];
+  const resetMonth =
+    !profile.last_app_date ||
+    profile.last_app_date.substring(0, 7) !== today.substring(0, 7);
+  const used = resetMonth ? 0 : (profile.apps_today ?? 0);
+  return used < limit;
 }
 
 /** Mutation to update the user's plan in Supabase. */

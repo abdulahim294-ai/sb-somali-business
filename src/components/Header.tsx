@@ -9,6 +9,9 @@ import {
   PlusCircle,
   UserCircle2,
   Briefcase,
+  LayoutDashboard,
+  Crown,
+  ChevronDown,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -19,8 +22,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { PlanBadge } from "@/components/PlanBadge";
 import { AuthModal } from "@/components/auth/AuthModal";
 import { useAuth } from "@/hooks/useAuth";
+import { usePlan } from "@/hooks/usePlan";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/useToast";
 import { cn } from "@/lib/utils";
@@ -29,6 +34,7 @@ const NAV = [
   { href: "/", label: "Bogga Hore" },
   { href: "/jobs", label: "Shaqooyin" },
   { href: "/freelancers", label: "Xirfadlayaal" },
+  { href: "/pricing", label: "Qiimaha" },
 ];
 
 export function Header() {
@@ -36,30 +42,19 @@ export function Header() {
   const [showAuth, setShowAuth] = useState(false);
   const [authMode, setAuthMode] = useState<"login" | "register">("login");
   const { user, profile } = useAuth();
+  const { plan } = usePlan();
   const { toast } = useToast();
   const [location] = useLocation();
 
-  // close mobile menu on route change
-  useEffect(() => {
-    setOpen(false);
-  }, [location]);
+  useEffect(() => { setOpen(false); }, [location]);
 
-  // lock body scroll when mobile menu is open
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
-    return () => {
-      document.body.style.overflow = "";
-    };
+    return () => { document.body.style.overflow = ""; };
   }, [open]);
 
-  const openLogin = () => {
-    setAuthMode("login");
-    setShowAuth(true);
-  };
-  const openRegister = () => {
-    setAuthMode("register");
-    setShowAuth(true);
-  };
+  const openLogin = () => { setAuthMode("login"); setShowAuth(true); };
+  const openRegister = () => { setAuthMode("register"); setShowAuth(true); };
 
   async function signOut() {
     await supabase.auth.signOut();
@@ -67,17 +62,12 @@ export function Header() {
   }
 
   const initials = profile?.full_name
-    ? profile.full_name
-        .split(" ")
-        .map((n) => n[0])
-        .slice(0, 2)
-        .join("")
-        .toUpperCase()
+    ? profile.full_name.split(" ").map((n) => n[0]).slice(0, 2).join("").toUpperCase()
     : user?.email?.[0]?.toUpperCase() ?? "U";
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full border-b border-border/60 bg-background/85 backdrop-blur-md">
+      <header className="sticky top-0 z-50 w-full border-b border-border/60 bg-background/90 backdrop-blur-md">
         {/* Top utility bar */}
         <div className="hidden md:block bg-primary text-primary-foreground py-2 text-xs font-medium">
           <div className="container-app flex justify-between items-center">
@@ -108,9 +98,7 @@ export function Header() {
           <div className="flex h-16 items-center justify-between gap-4">
             <Link href="/" className="flex items-center gap-2.5 shrink-0">
               <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-md shadow-primary/30">
-                <span className="text-white font-display font-bold text-lg leading-none">
-                  SB
-                </span>
+                <span className="text-white font-display font-bold text-lg leading-none">SB</span>
               </div>
               <span className="hidden sm:block font-display font-bold text-lg tracking-tight text-slate-900">
                 Somali Business
@@ -118,7 +106,7 @@ export function Header() {
             </Link>
 
             {/* Desktop nav */}
-            <nav className="hidden md:flex items-center gap-1">
+            <nav className="hidden md:flex items-center gap-0.5">
               {NAV.map((item) => {
                 const active =
                   item.href === "/"
@@ -151,47 +139,60 @@ export function Header() {
                   </Link>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <button className="flex items-center gap-2 rounded-full border border-border bg-white px-2 py-1.5 hover:bg-accent/30 transition-colors">
-                        <Avatar className="w-7 h-7">
+                      <button className="flex items-center gap-2 rounded-full border border-border bg-white px-2 py-1.5 hover:bg-accent/20 transition-colors max-w-[220px]">
+                        <Avatar className="w-7 h-7 shrink-0">
                           <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">
                             {initials}
                           </AvatarFallback>
                         </Avatar>
-                        <span className="text-sm font-medium max-w-[120px] truncate text-slate-700">
+                        <span className="text-sm font-medium truncate text-slate-700 max-w-[100px]">
                           {profile?.full_name ?? user.email}
                         </span>
+                        <ChevronDown className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
                       </button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-60">
-                      <div className="px-3 py-2.5 border-b border-border/60 mb-1">
+                    <DropdownMenuContent align="end" className="w-64">
+                      <div className="px-3 py-3 border-b border-border/60 mb-1">
                         <div className="font-semibold text-sm text-slate-900 truncate">
                           {profile?.full_name ?? "Isticmaale"}
                         </div>
-                        <div className="text-xs text-muted-foreground truncate">
+                        <div className="text-xs text-muted-foreground truncate mt-0.5">
                           {user.email}
                         </div>
-                        {profile && (
-                          <div className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-primary/10 text-primary text-[11px] font-semibold px-2 py-0.5">
-                            Trust Score · {profile.trust_score}/100
-                          </div>
-                        )}
+                        <div className="mt-2 flex items-center gap-2">
+                          <PlanBadge plan={plan} />
+                          {profile && (
+                            <span className="text-[11px] text-muted-foreground">
+                              Trust: {profile.trust_score}/100
+                            </span>
+                          )}
+                        </div>
                       </div>
                       <DropdownMenuItem asChild>
-                        <Link
-                          href="/post-job"
-                          className="flex items-center gap-2 cursor-pointer w-full"
-                        >
+                        <Link href="/dashboard" className="flex items-center gap-2 cursor-pointer w-full">
+                          <LayoutDashboard className="w-4 h-4 text-primary" /> Dashboard
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link href="/post-job" className="flex items-center gap-2 cursor-pointer w-full">
                           <PlusCircle className="w-4 h-4" /> Daabac shaqo
                         </Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem asChild>
-                        <Link
-                          href="/create-profile"
-                          className="flex items-center gap-2 cursor-pointer w-full"
-                        >
-                          <UserCircle2 className="w-4 h-4" /> Samee profile
+                        <Link href="/create-profile" className="flex items-center gap-2 cursor-pointer w-full">
+                          <UserCircle2 className="w-4 h-4" /> Samee / cusbooneysii profile
                         </Link>
                       </DropdownMenuItem>
+                      {plan.id !== "premium" && (
+                        <>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem asChild>
+                            <Link href="/pricing" className="flex items-center gap-2 cursor-pointer w-full text-amber-700 focus:text-amber-700">
+                              <Crown className="w-4 h-4 text-amber-500" /> Kor u qaad qorshaha
+                            </Link>
+                          </DropdownMenuItem>
+                        </>
+                      )}
                       <DropdownMenuSeparator />
                       <DropdownMenuItem
                         onClick={signOut}
@@ -207,11 +208,7 @@ export function Header() {
                   <Button variant="ghost" size="sm" onClick={openLogin}>
                     Soo gal
                   </Button>
-                  <Button
-                    size="sm"
-                    onClick={openRegister}
-                    className="font-semibold"
-                  >
+                  <Button size="sm" onClick={openRegister} className="font-semibold">
                     Samee xisaab
                   </Button>
                 </>
@@ -252,6 +249,7 @@ export function Header() {
                   </Link>
                 );
               })}
+
               <div className="pt-3 mt-3 border-t border-border/60 space-y-2">
                 {user ? (
                   <>
@@ -265,11 +263,16 @@ export function Header() {
                         <div className="font-semibold text-sm text-slate-900 truncate">
                           {profile?.full_name ?? "Isticmaale"}
                         </div>
-                        <div className="text-xs text-muted-foreground truncate">
-                          {user.email}
+                        <div className="flex items-center gap-1.5 mt-0.5">
+                          <PlanBadge plan={plan} />
                         </div>
                       </div>
                     </div>
+                    <Link href="/dashboard">
+                      <Button variant="outline" className="w-full gap-2">
+                        <LayoutDashboard className="w-4 h-4 text-primary" /> Dashboard
+                      </Button>
+                    </Link>
                     <Link href="/post-job">
                       <Button className="w-full gap-2">
                         <PlusCircle className="w-4 h-4" /> Daabac shaqo
@@ -280,6 +283,16 @@ export function Header() {
                         <UserCircle2 className="w-4 h-4" /> Samee profile
                       </Button>
                     </Link>
+                    {plan.id !== "premium" && (
+                      <Link href="/pricing">
+                        <Button
+                          variant="outline"
+                          className="w-full gap-2 border-amber-200 text-amber-700 hover:bg-amber-50"
+                        >
+                          <Crown className="w-4 h-4" /> Kor u qaad qorshaha
+                        </Button>
+                      </Link>
+                    )}
                     <Button
                       variant="ghost"
                       className="w-full gap-2 text-destructive hover:text-destructive"
@@ -290,14 +303,8 @@ export function Header() {
                   </>
                 ) : (
                   <>
-                    <Button className="w-full" onClick={openLogin}>
-                      Soo gal
-                    </Button>
-                    <Button
-                      variant="outline"
-                      className="w-full"
-                      onClick={openRegister}
-                    >
+                    <Button className="w-full" onClick={openLogin}>Soo gal</Button>
+                    <Button variant="outline" className="w-full" onClick={openRegister}>
                       Samee xisaab
                     </Button>
                     <Link href="/post-job">
@@ -322,8 +329,7 @@ export function Header() {
                   href="mailto:Somalibusinesssb@gmail.com"
                   className="flex items-center gap-2 px-2 py-1"
                 >
-                  <Mail className="w-3.5 h-3.5 text-primary" />{" "}
-                  Somalibusinesssb@gmail.com
+                  <Mail className="w-3.5 h-3.5 text-primary" /> Somalibusinesssb@gmail.com
                 </a>
               </div>
             </div>

@@ -1,112 +1,103 @@
 # SB Somali Business
 
-Marketplace bilaash ah oo isku xira ganacsatada iyo xirfadlayaasha Soomaaliyeed
-("jobs / freelancers"). Khidmadaha guud:
+Trusted Somali freelance & job marketplace — connects employers and workers
+with subscriptions, job applications, public profiles, and a full anti-scam system.
 
-- Daabicid shaqo (Post Job)
-- Samaynta profile xirfadle (Create Profile)
-- Raadinta shaqooyinka & xirfadlayaasha
-- Difaac khayaano (Anti-scam) — banner caawiye, trust score, soo sheegis,
-  honeypot, 24h delay, 3/day rate-limit
-- Auth (email + Google) iyada oo loo isticmaalo Supabase
+## Run & Operate
 
-UI-ga waxaa lagu qoray Soomaali, muuqaalkuna waa SaaS modern.
+- Workflow: **Start application** → `npm run dev` → port **5000**, host `0.0.0.0`
+- TypeScript: `npx tsc --noEmit`
+- Required env vars (in `.env`):
+  ```
+  VITE_SUPABASE_URL=https://xxxx.supabase.co
+  VITE_SUPABASE_ANON_KEY=...
+  ```
+- DB migrations: `supabase/001_initial.sql` → `supabase/002_plans_applications.sql`
 
 ## Stack
 
-- **Vite + React + TypeScript**
-- **Tailwind CSS** + design tokens custom ah (`src/index.css`)
-- **wouter** (routing)
-- **@tanstack/react-query** (state)
-- **react-hook-form + zod** (forms)
-- **Radix UI** (Dialog, Select, Toast)
-- **lucide-react** (icons), **framer-motion**, **date-fns**
-- **Supabase** (auth + Postgres) — `src/lib/supabase.ts`
+- **Vite + React + TypeScript** (SPA)
+- **Tailwind CSS** + design tokens (`src/index.css`)
+- **wouter** routing
+- **@tanstack/react-query** data/state
+- **react-hook-form + zod** forms
+- **Radix UI** (Dialog, Select, DropdownMenu, Toast)
+- **lucide-react** icons · **framer-motion** animations · **date-fns**
+- **Supabase** (auth + Postgres RLS) — `src/lib/supabase.ts`
 
-## Run / Dev
-
-- Workflow: `Start application` → `npm run dev` → port **5000**, host `0.0.0.0`,
-  `allowedHosts: true` (preview iframe wuu shaqaynayaa)
-- Vite manual chunks waa la sameeyay si bundle-ku u yaraado.
-
-## Environment
-
-`src/lib/supabase.ts` waa dulqaad leh — haddii env-yada la waayo wuu
-console.warn gareeyaa oo ka boodaa baddalka burburka. Si feature-yadu si buuxda
-ay u shaqeeyaan, geli `.env`:
+## Where Things Live
 
 ```
-VITE_SUPABASE_URL=https://xxxx.supabase.co
-VITE_SUPABASE_ANON_KEY=...
+src/
+  App.tsx              — routes
+  pages/               — one file per route
+  components/          — shared UI + auth/ subfolder
+  components/ui/       — design system primitives
+  hooks/               — useAuth, useJobs, useFreelancers, usePlan, useApplications
+  lib/                 — supabase.ts, plans.ts, profileCompletion.ts, utils.ts
+  utils/               — trustScore.ts, helpers.ts, spamFilter.ts
+supabase/
+  001_initial.sql      — schema v1 (profiles, jobs, freelancers, RLS, triggers)
+  002_plans_applications.sql — schema v2 (plan fields, applications, reviews)
 ```
 
-`SETUP.md` iyo `supabase/001_initial.sql` waxay leeyihiin tilmaamo si database
-loo sameeyo.
+Source-of-truth files: `src/lib/supabase.ts` (types), `src/lib/plans.ts` (plan definitions).
 
-## Routes (`src/App.tsx`)
+## Routes
 
-| Path              | Component       |
-| ----------------- | --------------- |
-| `/`               | `Home`          |
-| `/jobs`           | `Jobs`          |
-| `/jobs/:id`       | `JobDetails`    |
-| `/freelancers`    | `Freelancers`   |
-| `/post-job`       | `PostJob`       |
-| `/create-profile` | `CreateProfile` |
-| `*`               | `NotFound`      |
+| Path | Page |
+|---|---|
+| `/` | Home |
+| `/jobs` | Jobs list |
+| `/jobs/:id` | Job details + Apply CTA |
+| `/jobs/:id/apply` | Apply to job form |
+| `/freelancers` | Freelancers list |
+| `/profile/:id` | Public user profile |
+| `/post-job` | Post a job (plan-gated) |
+| `/create-profile` | Create freelancer profile |
+| `/pricing` | Plan comparison grid |
+| `/upgrade/:planId` | Upgrade/checkout flow |
+| `/dashboard` | User dashboard |
 
-## Design system (`src/index.css`)
+## Architecture Decisions
 
-- **Tokens**: primary purple `262 60% 50%`, radius `0.85rem`, font display
-  (Plus Jakarta) iyo body (Inter).
-- **Containers**:
-  - `container-app` — `max-w-6xl` ku haboon bogagga guud
-  - `container-narrow` — `max-w-3xl` ku haboon hero/CTA
-  - `container-form` — `max-w-2xl` ku haboon foomamka
-- **Utility classes**: `text-gradient`, `card-hover`, `section-eyebrow`,
-  `scam-banner`, `skeleton`, `trust-*`, `no-scrollbar`, `hp-field` (honeypot).
-- **UI primitives** (`src/components/ui/`): Button, Input, Textarea, Label,
-  FormField, Select, Dialog, Badge (success/warning), Toast.
+- **Graceful Supabase fallback**: app boots without env vars; `console.warn` only.
+  All hooks return empty arrays / nulls instead of crashing.
+- **Plan logic in `src/lib/plans.ts`**: single source of truth — limits, features,
+  comparison table rows. DB stores `profiles.plan TEXT DEFAULT 'free'`.
+- **Applications table** (`supabase/002`): unique constraint `(job_id, user_id)` prevents
+  duplicate applications server-side + surfaced as friendly error message.
+- **Trust score** auto-calculated by DB triggers on job-post, report, and review events.
+- **FreelancerCard** links to `/profile/:user_id` only when `user_id` is set (seed data
+  has null user_ids → falls back to WhatsApp-only contact).
 
-## Components muhiim ah
+## Product
 
-- `Header` — active route highlight, mobile menu buuxa oo body-scroll-lock leh
-- `Footer` — 4 column, "La sameeyay ❤ Soomaaliya"
-- `JobCard`, `FreelancerCard` — primary CTA "Eeg"
-- `AuthModal` — email + Google, show/hide password, scam-banner
-- `ReportDialog` — la wadaago labada page (Jobs list & JobDetails)
+- **Job flow**: Browse → Details → Apply (form with cover letter + contact) → Dashboard tracking
+- **Freelancer flow**: Create profile → Public profile page at `/profile/:id`
+- **Subscription**: Free / Basic ($5) / Free Pro ($9.99 dual-side) / Premium ($10)
+  — plan stored on `profiles.plan`, enforced client-side via `usePlan` / `useCanApply`
+- **Anti-scam**: trust score, scam banner on every job, report system, honeypot, 24h delay
+- **Dashboard**: profile completion bar, stats, my jobs, my applications, plan card
 
-## Hooks (`src/hooks/`)
+## User Preferences
 
-- `useAuth` — context provider, profile load
-- `useJobs` — `useJobs / useJob / useMyJobs / useBookmarks /
-  useCreateJob / useDeleteJob / useReportJob / useToggleBookmark`
-- `useFreelancers` — `useFreelancers / useCreateFreelancer`
-- `useToast`
+- UI language: Soomaali (natural, standardized — see glossary in previous session)
+- Design: SaaS modern, primary purple `262 60% 50%`, Outfit (display) + Inter (body)
+- Keep existing features — extend, do not rewrite
+- Supabase must always fail gracefully when env vars are missing
 
-## Anti-scam (`src/utils/`)
+## Gotchas
 
-- `spamFilter.ts` — keyword blocklist, honeypot, 24h delay, 3/day rate-limit
-- `trustScore.ts` — `getTrustInfo`, `SCAM_TIPS`, `REPORT_REASONS`
-- `helpers.ts` — `LOCATIONS`, `JOB_TYPES`, `shareJobWA`, `contactEmployerWA`
+- Run **both** SQL files in Supabase SQL editor before going live (in order: 001 → 002)
+- `jobs_public` is a VIEW — read from it, write to `jobs` table directly
+- FreelancerCard profile links require `user_id` column — seed data uses `NULL`
+- `useCanApply` / `useCanPost` track monthly limits by calendar month, not rolling 30 days
+- DropdownMenu from Radix wraps in a Portal — don't nest inside another Radix Dialog
 
-## Soomaali — istilaaxda guud
+## Pointers
 
-| Sax | Khalad |
-| --- | ------ |
-| Soo gal | Galin / Logn |
-| Hadda | Haddeer |
-| La xaqiijiyay | Xaqiijiyey |
-| Daabac shaqo | Daabaco shaqo |
-| Sug in yar | Sug Yar |
-| Ku dar | Kudar |
-| Dhammaan meelaha | Dhammaan Meelaaha |
-| Shaqo lama helin | Shaqo la ma helin |
-| Ku shaqaysiiso xirfadle | Ku Shaqeysi Xirfadlaha |
-| Sharax | Sharrax |
-
-## Deploy
-
-- `vercel.json` waxa uu leeyahay SPA rewrites.
-- Replit Deployments — `npm run build` keenaya `dist/`, kadibna `vite preview`
-  ama static host.
+- Plans: `src/lib/plans.ts`
+- Profile completion: `src/lib/profileCompletion.ts`
+- Trust system: `src/utils/trustScore.ts`
+- Spam protection: `src/utils/spamFilter.ts`
